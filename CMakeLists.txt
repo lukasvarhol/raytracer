@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(raytracer
   src/main.cpp
+  src/linear_algebra.h
+  src/color.h
 )
 
 target_include_directories(raytracer PUBLIC
