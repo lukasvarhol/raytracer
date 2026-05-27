@@ -54,7 +54,7 @@ inline vec3 operator*(const vec3 &v, const float s) {
 }
 
 inline float dot(const vec3 &a, const vec3 &b) {
-  return a.e[0]*a.e[0] + a.e[1]*a.e[1] + a.e[2]*a.e[2];
+  return a.e[0]*b.e[0] + a.e[1]*b.e[1] + a.e[2]*b.e[2];
 }
 
 inline vec3 cross(const vec3 &a, const vec3 &b) {
