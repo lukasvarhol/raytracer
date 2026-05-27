@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 struct vec3 {
   float e[3];
@@ -16,8 +17,13 @@ struct vec3 {
     return (e[0] * e[0]) + (e[1] * e[1]) + (e[2] * e[2]);
   }
   float length() const { return std::sqrt(length_squared()); }
- 
 };
+
+using point3 = vec3;
+
+inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
+    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+}
 
 inline vec3 operator+(const vec3 &a, const vec3 &b) {
   return vec3((a.e[0] + b.e[0]), (a.e[1] + b.e[1]), (a.e[2] + b.e[2]));
@@ -40,7 +46,7 @@ inline vec3 operator*(const float s, const vec3& v) {
 }
 
 inline vec3 operator/(const vec3 &v, const float s) {
-  return vec3(v.e[0]/s, v.e[1]/2, v.e[2]/s);
+  return vec3(v.e[0]/s, v.e[1]/s, v.e[2]/s);
 }
 
 inline vec3 operator*(const vec3 &v, const float s) {
