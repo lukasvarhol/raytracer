@@ -9,7 +9,7 @@ struct ray {
   const point3 &origin() const { return origin_; }
   const vec3& direction() const { return direction_; }
 
-  point3 at(float t) { return origin_ + (t * direction_); }
+  point3 at(float t) const { return origin_ + (t * direction_); }
 
 private:
   point3 origin_;

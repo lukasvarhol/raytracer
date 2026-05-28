@@ -4,20 +4,28 @@
 #include "color.h"
 #include "ray.h"
 
-bool hitSphere(const point3 &center, const float radius, const ray &r) {
+float hitSphere(const point3 &center, const float radius, const ray &r) {
   vec3 rayOriginToCenter = center - r.origin();
   // qyadratic formula varaibles:
   float a = dot(r.direction(), r.direction());
   float b = -2.0f * dot(r.direction(), rayOriginToCenter);
   float c = dot(rayOriginToCenter, rayOriginToCenter) - (radius * radius);
   float discriminant = (b * b) - (4 * a * c);
-  return (discriminant >= 0);
+  if (discriminant < 0) {
+    return -1.0f;
+  } else {
+    return (-b - std::sqrt(discriminant)) / (2.0f * a);
+  }
 }
 
 color rayColor(const ray &r) {
-  if (hitSphere(point3(0.0f, 0.0f, -1.0f), 0.5f, r)) return color(0.3f, 0.3f, 0.3f);
+  float t = hitSphere(point3(0.0f, 0.0f, -1.0f), 0.5f, r);
+  if (t > 0.0f) {
+    vec3 N = unitVector(r.at(t) - vec3(0.0f,0.0f,-1.0f));
+    return 0.5f*color(N.x()+1.0f, N.y()+1.0f, N.z()+1.0f);
+  }
   vec3 unitDirection = unitVector(r.direction());
-  auto a = 0.5*(unitDirection.y() + 1.0);
+  auto a = 0.5f*(unitDirection.y() + 1.0f);
   return (1.0f-a)*color(1.0f, 1.0f, 1.0f) + a*color(0.5f, 0.7f, 1.0f);
 }
 
