@@ -8,8 +8,7 @@ public:
   sphere(const point3 &centre, float radius)
       : centre(centre), radius(std::fmax(0.0f, radius)) {}
 
-  bool hit(const ray &r, float ray_tmin, float ray_tmax,
-           hitRecord &rec) const override {
+  bool hit(const ray &r, interval ray_t, hitRecord &rec) const override {
     vec3 rayOriginToCentre = centre - r.origin();
     float a = r.direction().length_squared();
     float h = dot(r.direction(), rayOriginToCentre);
@@ -23,9 +22,9 @@ public:
 
     // find nearest root within defined range
     float root = (h - sqrtDisc) / a;
-    if (root <= ray_tmin || ray_tmax <= root) {
+    if (!ray_t.surrounds(root)) {
       root = (h + sqrtDisc) / a;
-      if (root <= ray_tmin || ray_tmax <= root)
+      if (!ray_t.surrounds(root))
         return false;
     }
 

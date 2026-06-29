@@ -7,7 +7,7 @@
 
 color rayColor(const ray &r, const hittable& world) {
   hitRecord rec;
-  if (world.hit(r, 0.0f, infinity, rec)) {
+  if (world.hit(r, interval(0.0f, infinity), rec)) {
     return 0.5f * (rec.normal + color(1.0f, 1.0f, 1.0f));
   }
   vec3 unitDirection = unitVector(r.direction());
@@ -17,7 +17,7 @@ color rayColor(const ray &r, const hittable& world) {
 
 int main() {
   constexpr float aspectRatio = 16.0f/ 9.0f;
-  constexpr int imageWidth = 640;
+  constexpr int imageWidth = 300;
   constexpr int imageHeight =
       int(imageWidth / aspectRatio) < 1 ? 1 : int(imageWidth / aspectRatio);
 

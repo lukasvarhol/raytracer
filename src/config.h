@@ -15,4 +15,4 @@ inline float degreesToRadians(float degrees) { return degrees * pi / 180.0f; }
 #include "color.h"
 #include "ray.h"
 #include "linear_algebra.h"
-
+#include "interval.h"

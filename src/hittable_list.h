@@ -15,14 +15,13 @@ public:
 
   void add(std::shared_ptr<hittable> object) { objects.push_back(object); }
 
-  bool hit(const ray &r, float ray_tmin, float ray_tmax,
-           hitRecord &rec) const override {
+  bool hit(const ray &r, interval ray_t, hitRecord &rec) const override {
     hitRecord tempRec;
     bool hitAnything = false;
-    float closestYet = ray_tmax;
+    float closestYet = ray_t.max;
 
     for (const auto &object : objects) {
-      if (object->hit(r, ray_tmin, closestYet, tempRec)) {
+      if (object->hit(r, ray_t.min, closestYet, tempRec)) {
         hitAnything = true;
         closestYet = tempRec.t;
         rec = tempRec;
