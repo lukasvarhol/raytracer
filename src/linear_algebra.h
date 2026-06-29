@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cmath>
-#include <iostream>
+#include "config.h"
 
 struct vec3 {
   float e[3];
@@ -12,6 +11,10 @@ struct vec3 {
   float x() const { return e[0]; }
   float y() const { return e[1]; }
   float z() const { return e[2]; }
+
+  vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
+  float operator[](int i) const { return e[i]; }
+  float& operator[](int i ) {return e[i]; }
 
   float length_squared() const {
     return (e[0] * e[0]) + (e[1] * e[1]) + (e[2] * e[2]);

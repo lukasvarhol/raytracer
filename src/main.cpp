@@ -1,28 +1,14 @@
-#include <iostream>
 #include <fstream>
 
-#include "color.h"
-#include "ray.h"
+#include "config.h"
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-float hitSphere(const point3 &center, const float radius, const ray &r) {
-  vec3 rayOriginToCenter = center - r.origin();
-  // qyadratic formula varaibles:
-  float a = dot(r.direction(), r.direction());
-  float b = -2.0f * dot(r.direction(), rayOriginToCenter);
-  float c = dot(rayOriginToCenter, rayOriginToCenter) - (radius * radius);
-  float discriminant = (b * b) - (4 * a * c);
-  if (discriminant < 0) {
-    return -1.0f;
-  } else {
-    return (-b - std::sqrt(discriminant)) / (2.0f * a);
-  }
-}
-
-color rayColor(const ray &r) {
-  float t = hitSphere(point3(0.0f, 0.0f, -1.0f), 0.5f, r);
-  if (t > 0.0f) {
-    vec3 N = unitVector(r.at(t) - vec3(0.0f,0.0f,-1.0f));
-    return 0.5f*color(N.x()+1.0f, N.y()+1.0f, N.z()+1.0f);
+color rayColor(const ray &r, const hittable& world) {
+  hitRecord rec;
+  if (world.hit(r, 0.0f, infinity, rec)) {
+    return 0.5f * (rec.normal + color(1.0f, 1.0f, 1.0f));
   }
   vec3 unitDirection = unitVector(r.direction());
   auto a = 0.5f*(unitDirection.y() + 1.0f);
@@ -35,6 +21,10 @@ int main() {
   constexpr int imageHeight =
       int(imageWidth / aspectRatio) < 1 ? 1 : int(imageWidth / aspectRatio);
 
+  hittableList world;
+  world.add(std::make_shared<sphere>(point3(0.0f, 0.0f, -1.0f), 0.5f));
+  world.add(std::make_shared<sphere>(point3(0.0f, -100.5f, -1.0f), 100.0f));
+  
   constexpr float focalLength = 1.0f;
   constexpr float viewportHeight = 2.0f;
   constexpr float viewportWidth =
@@ -61,10 +51,10 @@ int main() {
     std::clog << "\rScan lines remaining: " << imageHeight - v << " " << std::flush;
     for (int h = 0; h < imageWidth; ++h) {
       point3 pixelCenter =
-          pixel00Location + (h * pixelDeltaH) + (v * pixelDeltaV);
+	pixel00Location + (h * pixelDeltaH) + (v * pixelDeltaV);
       vec3 rayDirection = pixelCenter - cameraCenter;
       ray r(cameraCenter, rayDirection);
-      color pixelColor = rayColor(r);
+      color pixelColor = rayColor(r, world);
       writeColor(out, pixelColor);
     }
   }

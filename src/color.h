@@ -1,7 +1,6 @@
 #pragma once
-
+#include "config.h"
 #include "linear_algebra.h"
-#include <iostream>
 #include <fstream>
 
 using color = vec3;
