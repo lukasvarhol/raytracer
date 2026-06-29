@@ -21,7 +21,7 @@ public:
     float closestYet = ray_t.max;
 
     for (const auto &object : objects) {
-      if (object->hit(r, ray_t.min, closestYet, tempRec)) {
+      if (object->hit(r, interval(ray_t.min, closestYet), tempRec)) {
         hitAnything = true;
         closestYet = tempRec.t;
         rec = tempRec;
