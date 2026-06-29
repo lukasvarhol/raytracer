@@ -16,7 +16,7 @@ inline float randomFloat() {
   return std::rand() / (RAND_MAX + 1.0f);
 }
 
-inline double randomFloat(float min, float max) {
+inline float randomFloat(float min, float max) {
   return min + (max - min) * randomFloat();
 }
 

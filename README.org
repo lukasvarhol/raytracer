@@ -1,0 +1,4 @@
+#+TITLE: Raytracer
+Simple raytracer in C++ based on [[https://raytracing.github.io/books/RayTracingInOneWeekend.html][Raytracing in One Weekend]]
+
+[[./renders/image.ppm]]

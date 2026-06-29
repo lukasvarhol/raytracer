@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "hittable.h"
+#include "linear_algebra.h"
 
 
 class camera {
@@ -10,6 +11,7 @@ public:
   float aspectRatio = 1.0f;
   int imageWidth = 100;
   int samplesPerPixel = 10; // how many times we sample a pixel's colour
+  int maxDepth;
 
   void render(const hittable &world) {
     initialize();
@@ -24,7 +26,7 @@ public:
         color pixelColor(0.0f, 0.0f, 0.0f);
         for (int sample{}; sample < samplesPerPixel; ++sample) {
           ray r = getRay(h, v);
-          pixelColor = pixelColor + rayColor(r, world);
+          pixelColor = pixelColor + rayColor(r, maxDepth, world);
 	}
         writeColor(out, pixelSamplesScale * pixelColor);
       }
@@ -82,11 +84,15 @@ private:
     return vec3(randomFloat() - 0.5f, randomFloat() - 0.5f, 0.0f);
   }
 
-  color rayColor(const ray &r, const hittable &world) const {
+  color rayColor(const ray &r, int depth, const hittable &world) const {
+    if (depth <= 0)
+      return color(0.0f, 0.0f, 0.0f);
+    
     hitRecord rec;
 
-    if (world.hit(r, interval(0.0f, infinity), rec)) {
-      return 0.5f * (rec.normal + color(1.0f, 1.0f, 1.0f));
+    if (world.hit(r, interval(0.001f, infinity), rec)) {
+      vec3 direction = randomOnHemisphere(rec.normal);
+      return 0.5f * rayColor(ray(rec.p, direction), depth-1, world);
     }
 
     vec3 unitDirection = unitVector(r.direction());
