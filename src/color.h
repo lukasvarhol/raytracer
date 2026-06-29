@@ -6,10 +6,16 @@
 
 using color = vec3;
 
+inline float linearToGamma(float linearComponent) {
+  if (linearComponent > 0.0f)
+    return std::sqrt(linearComponent);
+  return 0.0f;
+}
+
 void writeColor(std::ofstream &out, const color &pixelColor) {
-  float r = pixelColor.x();
-  float g = pixelColor.y();
-  float b = pixelColor.z();
+  float r = linearToGamma(pixelColor.x());
+  float g = linearToGamma(pixelColor.y());
+  float b = linearToGamma(pixelColor.z());
 
   static const interval intensity(0.000f, 0.999f);
   int rByte = int(256 * intensity.clamp(r));

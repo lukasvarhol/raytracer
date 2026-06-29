@@ -2,10 +2,13 @@
 
 #include "config.h"
 
+class material;
+
 class hitRecord {
 public:
   point3 p;
   vec3 normal;
+  std::shared_ptr<material> mat;
   float t;
   bool frontFace;
 

@@ -3,7 +3,7 @@
 #include "config.h"
 #include "hittable.h"
 #include "linear_algebra.h"
-
+#include "material.h"
 
 class camera {
 public:
@@ -91,8 +91,11 @@ private:
     hitRecord rec;
 
     if (world.hit(r, interval(0.001f, infinity), rec)) {
-      vec3 direction = randomOnHemisphere(rec.normal);
-      return 0.5f * rayColor(ray(rec.p, direction), depth-1, world);
+      ray scattered;
+      color attenuation;
+      if (rec.mat->scatter(r, rec, attenuation, scattered))
+        return attenuation * rayColor(scattered, depth - 1, world);
+      return color(0.0f, 0.0f, 0.0f);
     }
 
     vec3 unitDirection = unitVector(r.direction());
