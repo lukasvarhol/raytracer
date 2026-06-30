@@ -11,22 +11,22 @@ int main() {
   std::shared_ptr<material> materialCentreSphere =
       std::make_shared<lambertian>(color(0.1f, 0.2f, 0.5f));
   std::shared_ptr<material> materialLeftSphere =
-      std::make_shared<metal>(color(0.8f, 0.8f, 0.8f));
-  std::shared_ptr<material> materialRighteSphere =
-      std::make_shared<metal>(color(0.8f, 0.6f, 0.2f));
+    std::make_shared<metal>(color(0.8f, 0.8f, 0.8f), 0.5f);
+  std::shared_ptr<material> materialRightSphere =
+    std::make_shared<metal>(color(0.8f, 0.4f, 0.2f), 0.1f);
 
   world.add(std::make_shared<sphere>(point3(0.0f, -100.5f, -1.0f), 100.0f,
                                      materialGround));
-  world.add(std::make_shared<sphere>(point3(0.0f, 0.0f, -1.2f), 0.5f,
+  world.add(std::make_shared<sphere>(point3(0.0f, 0.0f, -1.5f), 0.5f,
                                      materialCentreSphere));
-  world.add(std::make_shared<sphere>(point3(-1.0f, 0.0f, -1.0f), 0.5f,
+  world.add(std::make_shared<sphere>(point3(-1.2f, 0.3f, -1.0f), 0.7f,
                                      materialLeftSphere));
-    world.add(std::make_shared<sphere>(point3(1.0f, 0.0f, -1.0f), 0.5f, materialRighteSphere));
+    world.add(std::make_shared<sphere>(point3(1.55f, 0.8f, -1.0f), 1.3f, materialRightSphere));
 
   camera cam;
 
   cam.aspectRatio = 16.0f / 9.0f;
-  cam.imageWidth = 400;
+  cam.imageWidth = 640;
   cam.samplesPerPixel = 100;
   cam.maxDepth = 50;
   
