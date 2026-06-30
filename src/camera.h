@@ -11,7 +11,12 @@ public:
   float aspectRatio = 1.0f;
   int imageWidth = 100;
   int samplesPerPixel = 10; // how many times we sample a pixel's colour
-  int maxDepth;
+  int maxDepth = 10;
+
+  float  vFoV     = 90.0f;
+  point3 lookFrom = point3(0.0f, 0.0f, 0.0f);
+  point3 lookAt   = point3(0.0f, 0.0f, -1.0f);
+  vec3   upDir    = vec3(0.0f, 1.0f, 0.0f);
 
   void render(const hittable &world) {
     initialize();
@@ -43,6 +48,7 @@ private:
   point3 pixel00Location;
   vec3 pixelDeltaH;
   vec3 pixelDeltaV;
+  vec3 u, v, w;  // camera basis vectors
 
   void initialize() {
     imageHeight = int(imageWidth / aspectRatio);
@@ -50,23 +56,29 @@ private:
 
     pixelSamplesScale = 1.0f / samplesPerPixel;
     
-    centre = point3(0.0f, 0.0f, 0.0f);
+    centre = lookFrom;
 
     // viewport dimensions
-    float focalLength = 1.0f;
-    float viewportHeight = 2.0f;
-    float viewportWidth = viewportHeight * (float(imageWidth)/imageHeight);
+    float focalLength = (lookFrom - lookAt).length();
+    float theta = degreesToRadians(vFoV);
+    float h = std::tan(theta/2.0f);
+    float viewportHeight = 2.0f * h * focalLength;
+    float viewportWidth = viewportHeight * (float(imageWidth) / imageHeight);
+
+    w = unitVector((lookFrom - lookAt));
+    u = unitVector(cross(upDir, w));
+    v = cross(w,u);
 
     // veritical & horizontal vectors
-    vec3 viewportH = vec3(viewportWidth, 0.0f, 0.0f);
-    vec3 viewportV = vec3(0.0f, -viewportHeight, 0.0f);
+    vec3 viewportH = viewportWidth * u;
+    vec3 viewportV = viewportHeight * -v;
 
     // vertical & horizonatl deltas
     pixelDeltaH = viewportH / float(imageWidth);
     pixelDeltaV = viewportV / float(imageHeight);
 
     // where is the upper-left pixel?
-    point3 viewportUpperLeft = centre - vec3(0.0f, 0.0f, focalLength) - viewportH/2 - viewportV/2;
+    point3 viewportUpperLeft = centre - (focalLength * w) - viewportH/2 - viewportV/2;
     pixel00Location = viewportUpperLeft + 0.5f * (pixelDeltaH + pixelDeltaV);
   }
 
