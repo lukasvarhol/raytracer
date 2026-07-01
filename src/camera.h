@@ -16,7 +16,10 @@ public:
   float  vFoV     = 90.0f;
   point3 lookFrom = point3(0.0f, 0.0f, 0.0f);
   point3 lookAt   = point3(0.0f, 0.0f, -1.0f);
-  vec3   upDir    = vec3(0.0f, 1.0f, 0.0f);
+  vec3 upDir = vec3(0.0f, 1.0f, 0.0f);
+
+  float defocusAngle = 0.0f;
+  float focusDist = 10.0f;
 
   void render(const hittable &world) {
     initialize();
@@ -48,7 +51,9 @@ private:
   point3 pixel00Location;
   vec3 pixelDeltaH;
   vec3 pixelDeltaV;
-  vec3 u, v, w;  // camera basis vectors
+  vec3 u, v, w; // camera basis vectors
+  vec3 defocusDiskH;
+  vec3 defocusDiskV;
 
   void initialize() {
     imageHeight = int(imageWidth / aspectRatio);
@@ -59,10 +64,9 @@ private:
     centre = lookFrom;
 
     // viewport dimensions
-    float focalLength = (lookFrom - lookAt).length();
     float theta = degreesToRadians(vFoV);
     float h = std::tan(theta/2.0f);
-    float viewportHeight = 2.0f * h * focalLength;
+    float viewportHeight = 2.0f * h * focusDist;
     float viewportWidth = viewportHeight * (float(imageWidth) / imageHeight);
 
     w = unitVector((lookFrom - lookAt));
@@ -78,15 +82,20 @@ private:
     pixelDeltaV = viewportV / float(imageHeight);
 
     // where is the upper-left pixel?
-    point3 viewportUpperLeft = centre - (focalLength * w) - viewportH/2 - viewportV/2;
+    point3 viewportUpperLeft = centre - (focusDist * w) - viewportH/2 - viewportV/2;
     pixel00Location = viewportUpperLeft + 0.5f * (pixelDeltaH + pixelDeltaV);
+
+    float defocusRadius =
+        focusDist * std::tan(degreesToRadians(defocusAngle / 2.0f));
+    defocusDiskH = u * defocusRadius;
+    defocusDiskV = v * defocusRadius;
   }
 
   ray getRay(int h, int v) const {
     vec3 offset = sampleSquare();
     point3 pixelSample = pixel00Location + ((h + offset.x()) * pixelDeltaH) +
                          ((v + offset.y()) * pixelDeltaV);
-    point3 rayOrigin = centre;
+    point3 rayOrigin = (defocusAngle <= 0.0f) ? centre : defocusDiskSample();
     vec3 rayDirection = pixelSample - rayOrigin;
 
     return ray(rayOrigin, rayDirection);
@@ -94,6 +103,11 @@ private:
 
   vec3 sampleSquare() const {
     return vec3(randomFloat() - 0.5f, randomFloat() - 0.5f, 0.0f);
+  }
+
+  point3 defocusDiskSample() const {
+    point3 p = randomInUnitDisk();
+    return centre + (p[0] * defocusDiskH) + (p[1] * defocusDiskV);
   }
 
   color rayColor(const ray &r, int depth, const hittable &world) const {

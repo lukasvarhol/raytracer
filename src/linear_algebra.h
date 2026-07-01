@@ -114,3 +114,10 @@ inline vec3 refract(const vec3 &uv, const vec3 &n, float refractionIndex) {
   return rOutPerp + rOutParallel;
 }
 
+inline vec3 randomInUnitDisk() {
+  while (true) {
+    point3 p = vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), 0.0f);
+    if (p.length_squared() < 1)
+      return p;
+  }
+}
