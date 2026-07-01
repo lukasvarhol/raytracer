@@ -97,8 +97,9 @@ private:
                          ((v + offset.y()) * pixelDeltaV);
     point3 rayOrigin = (defocusAngle <= 0.0f) ? centre : defocusDiskSample();
     vec3 rayDirection = pixelSample - rayOrigin;
+    float rayTime = randomFloat();
 
-    return ray(rayOrigin, rayDirection);
+    return ray(rayOrigin, rayDirection, rayTime);
   }
 
   vec3 sampleSquare() const {

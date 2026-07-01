@@ -17,14 +17,14 @@ class lambertian : public material {
 public:
   lambertian(const color &albedo) : albedo(albedo) {}
   
-  bool scatter(const ray &rIN, const hitRecord &rec, color &attenuation,
+  bool scatter(const ray &rIn, const hitRecord &rec, color &attenuation,
                ray &scattered) const override {
     vec3 scatterDirection = rec.normal + randomUnitVector();
 
     if (scatterDirection.nearZero())
       scatterDirection = rec.normal;
 
-    scattered = ray(rec.p, scatterDirection);
+    scattered = ray(rec.p, scatterDirection, rIn.time());
     attenuation = albedo;
     return true;
   }
@@ -39,7 +39,7 @@ public:
   bool scatter(const ray &rIn, const hitRecord &rec, color &attenuation, ray &scattered) const override {
     vec3 reflected = reflect(rIn.direction(), rec.normal);
     reflected = unitVector(reflected) + (fuzz * randomUnitVector());
-    scattered = ray(rec.p, reflected);
+    scattered = ray(rec.p, reflected, rIn.time());
     attenuation = albedo;
     return (dot(scattered.direction(), rec.normal) > 0);
   }
@@ -69,7 +69,7 @@ public:
             : refract(unitDirection, rec.normal, ri);
     
 
-    scattered = ray(rec.p, direction);
+    scattered = ray(rec.p, direction, rIn.time());
     
     return true;
   }

@@ -2,6 +2,7 @@
 #include "config.h"
 #include "hittable.h"
 #include "hittable_list.h"
+#include "linear_algebra.h"
 #include "sphere.h"
 #include "material.h"
 #include <memory>
@@ -25,7 +26,8 @@ int main() {
           // diffuse
           color albedo = color::random() * color::random();
           sphereMaterial = std::make_shared<lambertian>(albedo);
-          world.add(std::make_shared<sphere>(centre, 0.2f, sphereMaterial));
+	  point3 centre2 = centre + vec3(0.0f, randomFloat(0.0f, 0.5f), 0.0f);
+          world.add(std::make_shared<sphere>(centre, centre2, 0.2f, sphereMaterial));
         } else if (chooseMaterial < 0.95f) {
           // metal
           color albedo = color::random(0.5f, 1.0f);
@@ -50,8 +52,8 @@ int main() {
 
   camera cam;
   
-  cam.aspectRatio = 3.0f / 2.0f;
-  cam.imageWidth = 960;
+  cam.aspectRatio = 16.0f / 9.0f;
+  cam.imageWidth = 400;
   cam.samplesPerPixel = 50;
   cam.maxDepth = 50;
 
